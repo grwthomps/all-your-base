@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const fetch = require('node-fetch');
+const Forecast = require('../../../pojos/forecast')
 
 const enviroment = process.env.NODE_ENV || 'development'
 const config = require("../../../knexfile")[enviroment]
@@ -16,7 +17,7 @@ router.get('/', function (req, res) {
           .then(google_res => {
             fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${google_res.results[0].geometry.location.lat},${google_res.results[0].geometry.location.lng}`)
               .then(darksky_res => darksky_res.json())
-              .then(darksky_res => res.status(200).json(darksky_res))
+              .then(darksky_res => res.status(200).json(new Forecast(req.query.location, darksky_res).forecastWithLocation()))
           })
       } else {
         res.status(401).json({error: 'Unauthorized'});
@@ -25,4 +26,3 @@ router.get('/', function (req, res) {
 })
 
 module.exports = router;
-// google_res.results[0].geometry.location.lat
