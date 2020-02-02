@@ -6,6 +6,13 @@ class Forecast {
     this.daily = this.dailyForecast(full_forecast.daily)
   }
 
+  favoriteForecast() {
+    return {
+      location: this.location,
+      current_weather: this.currently
+    }
+  }
+
   forecastWithLocation() {
     return {
       location: this.location,
