@@ -10,11 +10,16 @@ exports.seed = function(knex) {
       return Promise.all([
 
         // Insert a single paper, return the paper ID, insert 2 footnotes
-        knex('users').insert({api_key: 'fake_key'}, 'id')
+        knex('users').insert([
+          {api_key: 'first_key'},
+          {api_key: 'second_key'},
+        ], 'id')
         .then(user => {
           return knex('favorites').insert([
             { location: 'Denver, CO', user_id: user[0] },
-            { location: 'Orlando, FL', user_id: user[0] }
+            { location: 'Orlando, FL', user_id: user[0] },
+            { location: 'Denver, CO', user_id: user[1] },
+            { location: 'Portland, OR', user_id: user[1] }
           ])
         })
         .then(() => console.log('Seeding complete!'))
