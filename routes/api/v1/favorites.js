@@ -48,4 +48,24 @@ router.get('/', function (req, res) {
   }).catch(error => res.status(400).json({error: 'Bad request.'}))
 })
 
+router.delete('/', function (req, res) {
+  database('users').where('api_key', req.body.api_key)
+    .first()
+    .then(user => {
+      if (user) {
+        database('favorites')
+          .where({
+            user_id: user.id,
+            location: req.body.location
+          })
+          .del()
+          .then(id => {
+            res.sendStatus(204)
+          }).catch(error => res.status(400).json({error: 'Bad request.'}))
+      } else {
+        res.status(401).json({error: 'Unauthorized'});
+      }
+  }).catch(error => res.status(400).json({error: 'Bad request.'}))
+})
+
 module.exports = router;
