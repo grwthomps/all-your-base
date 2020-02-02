@@ -29,18 +29,18 @@ router.get('/', function (req, res) {
       if (user) {
         database('favorites').where('user_id', user.id)
           .then(favorites => {
-            let favorites_forecasts = favorites.map(favorite => {
+            let favoritesForecastsArr = favorites.map(favorite => {
               return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${favorite.location}&key=${process.env.GOOGLE_API_KEY}`)
-                .then(google_res => google_res.json())
-                .then(google_res => {
-                  return fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${google_res.results[0].geometry.location.lat},${google_res.results[0].geometry.location.lng}`)
-                    .then(darksky_res => darksky_res.json())
-                    .then(darksky_res => new Forecast(favorite.location, darksky_res).favoriteForecast())
+                .then(googleRes => googleRes.json())
+                .then(googleRes => {
+                  return fetch(`https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${googleRes.results[0].geometry.location.lat},${googleRes.results[0].geometry.location.lng}`)
+                    .then(darkskyRes => darkskyRes.json())
+                    .then(darkskyRes => new Forecast(favorite.location, darkskyRes).favoriteForecast())
                 })
               return favorite
             })
-            Promise.all(favorites_forecasts)
-              .then(favorites_res => res.status(200).json(favorites_res))
+            Promise.all(favoritesForecastsArr)
+              .then(favoritesRes => res.status(200).json(favoritesRes))
           })
       } else {
         res.status(401).json({error: 'Unauthorized'});
