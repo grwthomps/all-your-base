@@ -1,74 +1,109 @@
-# All your Express base are belong to us
+# Express Sweater Weather
 
-[![Build Status](https://travis-ci.com/turingschool-examples/all-your-base.svg?branch=master)](https://travis-ci.com/turingschool-examples/all-your-base)
+## Introduction
+
+Express Sweater Weather is a minimal API built on Express using JavaScript. It allows pre-existing users to request the forecast of a location, save a location as a favorite, and delete an existing favorite. Requests are validated using an api key tied to each user.
+
+## Tech Stack
+
+- Node.js (13.2.0)
+- Express (4.17.1)
+- Knex (0.20.8)
+- PostgreSQL (1.0.2)
+- JavaScript
 
 ## Getting started
-To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
 
-#### Installing necessary dependencies
-The easiest way to get started is to run the following command. This will pull down any necessary dependencies that your app will require. You can think of this command as something incredibly similar to `bundle install` in Rails. 
+#### Install necessary dependencies
 
-`npm install`
+*Note: This project is built on Express, which requires Node.js. For more information about installing Node.js, see [here](https://nodejs.org/).*
 
-#### Set up your local database
-You’ll need to figure out a name for your database. We suggest calling it something like `sweater_weather_dev`.  
+Install necessary dependencies using `npm install` from project root directory.
 
-To get things set up, you’ll need to access your Postgres instance by typing in `psql` into your terminal. Once there, you can create your database by running the comment `CREATE DATABASE PUT_DATABASE_NAME_HERE_dev;`. 
+#### Set up local database
 
-Now you have a database for your new project.
+This project uses a PostgreSQL database. Ensure you have Postgres installed (`npm install` should take care of this) and create a new database. The existing knexfile config points to a database called `sweater_weather_dev`. However, this can easily be changed in `/knexfile.js`.
 
-#### Migrations
-Once you have your database setup, you’ll need to run some migrations (if you have any). You can do this by running the following command: 
+#### Migrate
 
-`knex migrate:latest`
+To migrate, run `knex migrate:latest`. The included seed file at `/db/seeds/dev/users_and_favorites.js` includes 2 users and 2 favorites for each user. To seed, run `knex seed:run`
 
+#### API Keys
 
-Instructions to create database, run migrations, and seed: 
-```
-psql
-CREATE DATABASE DATABASE_NAME_dev;
-\q
+This project uses the [Google Geocode API](https://developers.google.com/maps/documentation/geocoding/start) and the [Dark Sky API](https://darksky.net/dev), both of which require api keys to use. [Dotenv](https://github.com/motdotla/dotenv) has been included for securely accessing these keys. To use, simply create a `.env` file in the root directory and store your keys as `key_name=key`. Keys are accessed in the code using `process.env.key_name`.
 
-knex migrate:latest
-knex seed:run
-```
+#### Running a Local Server
 
-#### Set up your test database
-Most of the setup is going to be same as the one you did before. You’ll notice one small difference with setting the environment flag to `test`.  
+To run locally, use `npm start` from the root directory. Requests can then be made to `localhost:3000`.
+
+## Endpoints
+
+Retrieve forecast for specific city:
 
 ```
-psql
-CREATE DATABASE DATABASE_NAME_test;
-\q
+GET /api/v1/forecast?location=city,state (e.g. denver,co)
 
-knex migrate:latest --env test
+Body:
+
+{
+ "api_key": "key_goes_here"
+}
 ```
 
-## Running your tests
-Running tests are simple and require you to run the following command below: 
+Create a favorite:
 
-`npm test`
-
-When the tests have completed, you’ll get a read out of how things panned out. The tests will be a bit more noisy than what you’re used to, so be prepared. 
-
-## Setting up your production environment
-This repo comes with a lot of things prepared for you. This includes production ready configuration. To get started, you’ll need to do a few things. 
-
-- Start a brand new app on the Heroku dashboard 
-- Add a Postgres instance to your new Heroku app
-- Find the URL of that same Postgres instance and copy it. It should look like a long url. It may look something like like `postgres://sdflkjsdflksdf:9d3367042c8739f3...`.
-- Update your `knexfile.js` file to use your Heroku database instance. You’ll see a key of `connection` with a value of an empty string. This is where you’ll paste your new Postgres instance URL. 
-
-Once you’ve set all of that up, you’ll need to `add the remote` to your new app. This should work no differently than how you’ve done it with any Rails project. Adding this remote will allow you to run `git push heroku master`. 
-
-Once you’ve done that, you’ll need to `bash` into your Heroku instance and get some things set up. 
-
-- Run the following commands to get started:
 ```
-heroku run bash
-npm install
-nom install -g knex
-knex migrate:latest
+POST /api/v1/favorites
+
+Body:
+
+{
+  "location": "Denver, CO",
+  "api_key": "key_goes_here"
+}
 ```
 
-This will install any dependencies, install Knex, and migrate any changes that you’ve made to the database. 
+List all favorites for a user with current weather for each favorite:
+
+```
+GET /api/v1/favorites
+
+Body:
+
+{
+  "api_key": "key_goes_here"
+}
+```
+
+Delete an existing favorite:
+
+```
+DELETE /api/v1/favorites
+
+Body:
+
+{
+  "location": "Denver, CO",
+  "api_key": "key_goes_here"
+}
+```
+
+**All requests require a valid `api_key` to be specified in the body of the request.**
+
+## Database Schema
+
+Users Table:
+
+![](LINK)
+
+Favorites Table:
+
+![](LINK)
+
+## Project Board
+
+[GitHub Project Board](https://github.com/grwthomps/all-your-base/projects/1)
+
+## Core Contributors
+
+[Graham Thompson](https://github.com/grwthomps)
