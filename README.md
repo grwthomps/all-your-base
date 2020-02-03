@@ -94,11 +94,11 @@ Body:
 
 Users Table:
 
-![](LINK)
+![](https://github.com/grwthomps/all-your-base/blob/master/images/sw_users_table.png)
 
 Favorites Table:
 
-![](LINK)
+![](https://github.com/grwthomps/all-your-base/blob/master/images/sw_favorites_table.png)
 
 ## Project Board
 
